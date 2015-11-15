@@ -23,7 +23,7 @@ public class Application {
 			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
 			+ "\\s*(?<street>.*?)\\s*,"
 			+ "\\s*(?<zip>\\d{5})"
-			+ "\\s*(?<city>.*?)<.*?";	
+			+ "\\s*(?<city>.*?)<.*";	
 
 	private static String moebus2 = ""
 			+ ".*id=\"c176\""
@@ -31,7 +31,7 @@ public class Application {
 			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
 			+ "\\s*(?<street>.*?)\\s*,"
 			+ "\\s*(?<zip>\\d{5})"
-			+ "\\s*(?<city>.*?)<.*?";	
+			+ "\\s*(?<city>.*?)<.*";	
 	
 	private static String content(String source) throws Exception {
 		// TODO Handle redirects to https

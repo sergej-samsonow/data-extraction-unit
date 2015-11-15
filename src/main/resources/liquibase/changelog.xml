@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+	<changeSet id="1" author="sergej">
+		<createTable tableName="companies">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="url" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="address_extraction_unit_id" type="int">
+				<constraints nullable="true" />
+			</column>
+			<column name="address_extraction_rule" defaultValue="" type="text">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="extraction_units">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="extraction_class" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="addresses">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="company_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="extraction_time" type="timestamp">
+				<constraints nullable="false" />
+			</column>
+			<column name="company_name" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+			<column name="street" type="varchar(256)">
+				<constraints nullable="true" />
+			</column>
+			<column name="zip" type="char(5)">
+				<constraints nullable="true" />
+			</column>
+			<column name="city" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+		<insert tableName="extraction_units">
+			<column name="id">1</column>
+			<column name="extraction_class">RegexExtractor</column>
+    	</insert>
+		<insert tableName="companies">
+			<column name="id">1</column>
+			<column name="name">regis24</column>
+			<column name="url">http://www.regis24.de/impressum.php</column>
+			<column name="address_extraction_unit_id">1</column>
+			<column name="address_extraction_rule"><![CDATA[.*?contentText"\s*>\s*+<\s*p\s*>\s*(?<name>.*)\s*<\s*br\s*/\s*>\s*(?<street>.*)\s*<\s*br\s*/\s*>\s*(?<zip>\d{5})\s*(?<city>.*?)</\s*p>.*]]></column>
+    	</insert>
+		<insert tableName="companies">
+			<column name="id">2</column>
+			<column name="name">moebus1</column>
+			<column name="address_extraction_unit_id">1</column>
+			<column name="url">http://www.moebus-gruppe.de/impressum.html</column>
+			<column name="address_extraction_rule"><![CDATA[.*id="c175"\s*.*?strong\s*>\s*(?<name>.*?)\s*<\s*/\s*strong\s*>.*?/\s*strong.*?<\s*br\s*/?\s*>\s*(?<street>.*?)\s*,\s*(?<zip>\d{5})\s*(?<city>.*?)<.*]]></column>
+    	</insert>
+		<insert tableName="companies">
+			<column name="id">3</column>
+			<column name="name">moebus2</column>
+			<column name="address_extraction_unit_id">1</column>
+			<column name="url">http://www.moebus-gruppe.de/impressum.html</column>
+			<column name="address_extraction_rule"><![CDATA[.*id="c176"\s*.*?strong\s*>\s*(?<name>.*?)\s*<\s*/\s*strong\s*>.*?/\s*strong.*?<\s*br\s*/?\s*>\s*(?<street>.*?)\s*,\s*(?<zip>\d{5})\s*(?<city>.*?)<.*]]></column>
+    	</insert>
+	</changeSet>
+</databaseChangeLog>
