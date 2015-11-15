@@ -17,8 +17,24 @@ public class Application {
 			+ "<\\s*br\\s*/\\s*>\\s*(?<zip>\\d{5})\\s*"
 			+ "(?<city>.*?)</\\s*p>.*";
 
-	public static void main(String ... args) throws Exception {
-		String source = "http://www.regis24.de/impressum.php";
+	private static String moebus1 = ""
+			+ ".*id=\"c175\""
+			+ "\\s*.*?strong\\s*>\\s*(?<name>.*?)"
+			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
+			+ "\\s*(?<street>.*?)\\s*,"
+			+ "\\s*(?<zip>\\d{5})"
+			+ "\\s*(?<city>.*?)<.*?";	
+
+	private static String moebus2 = ""
+			+ ".*id=\"c176\""
+			+ "\\s*.*?strong\\s*>\\s*(?<name>.*?)"
+			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
+			+ "\\s*(?<street>.*?)\\s*,"
+			+ "\\s*(?<zip>\\d{5})"
+			+ "\\s*(?<city>.*?)<.*?";	
+	
+	private static String content(String source) throws Exception {
+		// TODO Handle redirects to https
 		URL url = new URL(source);
 		URLConnection openConnection = url.openConnection();
 		StringBuilder builder = new StringBuilder();
@@ -29,17 +45,13 @@ public class Application {
 				builder.append(line);
 			}
 		}
-		
-		// TODO Extract data from url.
-		// 1 company name.
-		// 2 address
-		// 3 address (additional)
-		// 4 city
-		// 5 zip
-		
-		String loaded = builder.toString();
-		Pattern pattern = Pattern.compile(regisRegex);
-		Matcher matcher = pattern.matcher(loaded);
+		return builder.toString();
+	}
+
+	private static void extract(String source, String pattern) throws Exception {
+		String loaded = content(source);
+		Pattern compiled = Pattern.compile(pattern);
+		Matcher matcher = compiled.matcher(loaded);
 		if (matcher.find()) {
 			System.out.println("Source " + source);
 			System.out.println("    name   : " + matcher.group("name"));
@@ -47,7 +59,14 @@ public class Application {
 			System.out.println("    zip    : " + matcher.group("zip"));
 			System.out.println("    city   : " + matcher.group("city"));
 		}
+	}
 
-
+	public static void main(String ... args) throws Exception {
+		// extract("http://www.regis24.de/impressum.php", regisRegex);
+		// FIXME work not System.out.println(content("http://www.savage-wear.com/impressum/index.html"));
+		// FIXME work not System.out.println(content("http://www.idealo.de/preisvergleich/AGB.html"));
+		extract("http://www.regis24.de/impressum.php", regisRegex);
+		extract("http://www.moebus-gruppe.de/impressum.html", moebus1);
+		extract("http://www.moebus-gruppe.de/impressum.html", moebus2);
 	}
 }
