@@ -13,8 +13,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hsqldb.jdbc.JDBCClobClient;
-
 public class Application {
 	
 	private static String content(String source) throws Exception {
@@ -53,7 +51,10 @@ public class Application {
 		ResultSet companies = connection.createStatement().executeQuery("select * from companies");
 		ResultSetMetaData meta = companies.getMetaData();
 		int columnCountMax = meta.getColumnCount() + 1;
+		StringBuilder message = new StringBuilder();
 		while (companies.next()) {
+			int id = 0;
+			String company = "";
 			String url = "";
 			String regex = "";
 			for (int i = 1; i < columnCountMax; i++) {
@@ -62,12 +63,21 @@ public class Application {
 					url = (String) companies.getObject(i);
 				}
 				else if ("ADDRESS_EXTRACTION_RULE".equals(name)) {
-					JDBCClobClient text = (JDBCClobClient) companies.getObject(i);
-					int length = (int) text.length();
-					regex = text.getSubString(1, length);
+					regex = (String) companies.getObject(i);
+				}
+				else if ("ID".equals(name)) {
+					id = companies.getInt(i);
+				}
+				else if ("NAME".equals(name)) {
+					company = (String) companies.getObject(i);
 				}
 			}
 			extract(url, regex);
+			message.append("New data for Company " + company + " with id " + id + "\n");
 		}
+		System.out.println("\n");
+		System.out.println(message.toString());
+		System.out.println("SEND MAIL");
+		// Mail.send(message.toString());
 	}
 }

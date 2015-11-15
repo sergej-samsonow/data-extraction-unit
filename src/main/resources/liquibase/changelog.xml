@@ -78,4 +78,7 @@
 			<column name="address_extraction_rule"><![CDATA[.*id="c176"\s*.*?strong\s*>\s*(?<name>.*?)\s*<\s*/\s*strong\s*>.*?/\s*strong.*?<\s*br\s*/?\s*>\s*(?<street>.*?)\s*,\s*(?<zip>\d{5})\s*(?<city>.*?)<.*]]></column>
     	</insert>
 	</changeSet>
+	<changeSet id="2" author="sergej">
+		<modifyDataType tableName="companies" columnName="address_extraction_rule" newDataType="varchar(256)" />
+	</changeSet>
 </databaseChangeLog>
