@@ -5,33 +5,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hsqldb.jdbc.JDBCClobClient;
+
 public class Application {
-
-	private static String regisRegex = "" 
-			+ ".*?contentText\"\\s*>\\s*"
-			+ "<\\s*p\\s*>\\s*(?<name>.*)\\s*"
-			+ "<\\s*br\\s*/\\s*>\\s*(?<street>.*)\\s*"
-			+ "<\\s*br\\s*/\\s*>\\s*(?<zip>\\d{5})\\s*"
-			+ "(?<city>.*?)</\\s*p>.*";
-
-	private static String moebus1 = ""
-			+ ".*id=\"c175\""
-			+ "\\s*.*?strong\\s*>\\s*(?<name>.*?)"
-			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
-			+ "\\s*(?<street>.*?)\\s*,"
-			+ "\\s*(?<zip>\\d{5})"
-			+ "\\s*(?<city>.*?)<.*";	
-
-	private static String moebus2 = ""
-			+ ".*id=\"c176\""
-			+ "\\s*.*?strong\\s*>\\s*(?<name>.*?)"
-			+ "\\s*<\\s*/\\s*strong\\s*>.*?/\\s*strong.*?<\\s*br\\s*/?\\s*>"
-			+ "\\s*(?<street>.*?)\\s*,"
-			+ "\\s*(?<zip>\\d{5})"
-			+ "\\s*(?<city>.*?)<.*";	
 	
 	private static String content(String source) throws Exception {
 		// TODO Handle redirects to https
@@ -62,11 +46,28 @@ public class Application {
 	}
 
 	public static void main(String ... args) throws Exception {
-		// extract("http://www.regis24.de/impressum.php", regisRegex);
-		// FIXME work not System.out.println(content("http://www.savage-wear.com/impressum/index.html"));
-		// FIXME work not System.out.println(content("http://www.idealo.de/preisvergleich/AGB.html"));
-		extract("http://www.regis24.de/impressum.php", regisRegex);
-		extract("http://www.moebus-gruppe.de/impressum.html", moebus1);
-		extract("http://www.moebus-gruppe.de/impressum.html", moebus2);
+		Properties properties = new Properties();
+		properties.put("user", "sa");
+		properties.put("password", "");
+		Connection connection = DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:9001/data-extraction-unit", properties);
+		ResultSet companies = connection.createStatement().executeQuery("select * from companies");
+		ResultSetMetaData meta = companies.getMetaData();
+		int columnCountMax = meta.getColumnCount() + 1;
+		while (companies.next()) {
+			String url = "";
+			String regex = "";
+			for (int i = 1; i < columnCountMax; i++) {
+				String name = meta.getColumnName(i);
+				if ("URL".equals(name)) {
+					url = (String) companies.getObject(i);
+				}
+				else if ("ADDRESS_EXTRACTION_RULE".equals(name)) {
+					JDBCClobClient text = (JDBCClobClient) companies.getObject(i);
+					int length = (int) text.length();
+					regex = text.getSubString(1, length);
+				}
+			}
+			extract(url, regex);
+		}
 	}
 }
