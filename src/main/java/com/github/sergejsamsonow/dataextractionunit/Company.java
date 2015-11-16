@@ -1,38 +1,13 @@
 package com.github.sergejsamsonow.dataextractionunit;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "companies")
 public class Company {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String name;
 	private String url;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_extraction_unit_id")
 	private ExtractionUnit addressExtractionUnit;
-
-	@Column(name = "address_extraction_rule")
 	private String addressExtractionRule;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "last_parsed_address_id", nullable = true)
 	private Address lastParsedAddress;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "current_address_id", nullable = true)
 	private Address address;
 
 	public Address getLastParsedAddress() {

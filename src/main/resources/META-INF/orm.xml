@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+        http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" version="2.1">
+        <description>ORM for data extraction unit</description>
+        <package>com.github.sergejsamsonow.dataextractionunit</package>
+        <entity class="ExtractionUnit">
+        	<table name="extraction_units"/>
+        	<attributes>
+        		<id name="id">
+        			<generated-value strategy="IDENTITY"/>
+        		</id>
+        		<basic name="extractionClass">
+        			<column name="extraction_class"/>
+        		</basic>
+        	</attributes>
+        </entity>
+        <entity class="Address">
+        	<table name="addresses"/>
+        	<attributes>
+        		<id name="id">
+        			<generated-value strategy="IDENTITY"/>
+        		</id>
+        		<basic name="extractionTime">
+        			<column name="extraction_time"/>
+        			<temporal>TIMESTAMP</temporal>
+        		</basic>
+        		<basic name="companyName">
+        			<column name="company_name"/>
+        		</basic>
+        		<basic name="street" />
+        		<basic name="zip" />
+        		<basic name="city" />
+        		<one-to-one name="company" fetch="LAZY">
+        			<join-column name="company_id"/>
+        		</one-to-one>
+        	</attributes>
+        </entity>
+        <entity class="Company">
+        	<table name="companies" />
+        	<attributes>
+        		<id name="id">
+        			<generated-value strategy="IDENTITY"/>
+        		</id>
+				<basic name="name"/>
+				<basic name="url"/>
+				<basic name="addressExtractionRule">
+					<column name="address_extraction_rule"/>
+				</basic>	
+				<one-to-one name="addressExtractionUnit" fetch="LAZY">
+					<join-column name="address_extraction_unit_id"/>
+				</one-to-one>
+				<one-to-one name="lastParsedAddress" fetch="LAZY">
+					<join-column name="last_parsed_address_id" nullable="true"/>
+				</one-to-one>
+				<one-to-one name="address" fetch="LAZY">
+					<join-column name="current_address_id" nullable="true"/>
+				</one-to-one>
+        	</attributes>
+        </entity>
+</entity-mappings>
