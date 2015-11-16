@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 	<changeSet id="1" author="sergej">
 		<createTable tableName="companies">
-			<column name="id" type="int">
+			<column name="id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="varchar(50)">
@@ -22,7 +22,7 @@
 			</column>
 		</createTable>
 		<createTable tableName="extraction_units">
-			<column name="id" type="int">
+			<column name="id" type="int"  autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="extraction_class" type="varchar(50)">
@@ -30,7 +30,7 @@
 			</column>
 		</createTable>
 		<createTable tableName="addresses">
-			<column name="id" type="int">
+			<column name="id" type="int"  autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="company_id" type="int">
@@ -80,5 +80,17 @@
 	</changeSet>
 	<changeSet id="2" author="sergej">
 		<modifyDataType tableName="companies" columnName="address_extraction_rule" newDataType="varchar(256)" />
+	</changeSet>
+	<changeSet id="3" author="sergej">
+		<addColumn tableName="companies">
+			<column name="last_parsed_address_id" type="int">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="companies">
+			<column name="current_address_id" type="int">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

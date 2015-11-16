@@ -5,12 +5,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,27 +31,55 @@ public class Application {
 		return builder.toString();
 	}
 
-	private static void extract(String source, String pattern) throws Exception {
+	private static Address extract(String source, String pattern) throws Exception {
 		String loaded = content(source);
 		Pattern compiled = Pattern.compile(pattern);
 		Matcher matcher = compiled.matcher(loaded);
+		Address address = new Address();
 		if (matcher.find()) {
-			System.out.println("Source " + source);
-			System.out.println("    name   : " + matcher.group("name"));
-			System.out.println("    street : " + matcher.group("street"));
-			System.out.println("    zip    : " + matcher.group("zip"));
-			System.out.println("    city   : " + matcher.group("city"));
+			address.setExtractionTime(new Date());
+			address.setCompanyName(matcher.group("name"));
+			address.setStreet(matcher.group("street"));
+			address.setZip(matcher.group("zip"));
+			address.setCity(matcher.group("city"));
 		}
+		return address;
 	}
 
 	public static void main(String ... args) throws Exception {
 		EntityManagerFactory factory = Persistence.createEntityManagerFactory("default-persistence-unit");	
 		EntityManager entityManager =  factory.createEntityManager();
-		List<Company> resultList = entityManager.createQuery("SELECT c FROM Company c", Company.class).getResultList();
-		for (Company company : resultList) {
-			extract(company.getUrl(), company.getAddressExtractionRule());
+		extractAndStoreAddresses(entityManager);
+		List<Address> addresses = entityManager.createQuery("SELECT a FROM Address a", Address.class).getResultList();
+		for (Address address : addresses) {
+			System.out.println(address.getCompany().getUrl());
+			System.out.println(address.getCompany().getAddressExtractionUnit().getExtractionClass());
+			System.out.println(address.getCity());
+			System.out.println(address.getExtractionTime());
+			System.out.println(address.getZip());
+			System.out.println(address.getStreet());
+			System.out.println(address.getCompanyName());
+			System.out.println(address.getId());
 		}
 		entityManager.close();
 		factory.close();
+	}
+
+	private static void extractAndStoreAddresses(EntityManager entityManager) throws Exception {
+		List<Company> resultList = entityManager.createQuery("SELECT c FROM Company c", Company.class).getResultList();
+		for (Company company : resultList) {
+			Address extracted = extract(company.getUrl(), company.getAddressExtractionRule());
+			extracted.setCompany(company);;
+			System.out.println("Source " + company.getUrl());
+			System.out.println("    name   : " + extracted.getCompanyName());
+			System.out.println("    street : " + extracted.getStreet());
+			System.out.println("    zip    : " + extracted.getZip());
+			System.out.println("    city   : " + extracted.getCity());
+			entityManager.getTransaction().begin();
+			company.setLastParsedAddress(extracted);
+			entityManager.persist(extracted);
+			entityManager.persist(company);
+			entityManager.getTransaction().commit();
+		}
 	}
 }
