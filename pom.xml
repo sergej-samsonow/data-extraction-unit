@@ -14,7 +14,7 @@
 		<db.driver>org.hsqldb.jdbcDriver</db.driver>
 		<db.user>sa</db.user>
 		<db.password></db.password>
-		
+
 		<hibernate.version>5.0.3.Final</hibernate.version>
 	</properties>
 
@@ -48,6 +48,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>2.5.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
