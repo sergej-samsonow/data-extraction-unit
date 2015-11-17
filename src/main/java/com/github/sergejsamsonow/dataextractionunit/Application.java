@@ -66,20 +66,10 @@ public class Application {
 	}
 
 	private static void extractAndStoreAddresses(EntityManager entityManager) throws Exception {
-		List<Company> resultList = entityManager.createQuery("SELECT c FROM Company c", Company.class).getResultList();
-		for (Company company : resultList) {
-			Address extracted = extract(company.getUrl(), company.getAddressExtractionRule());
-			extracted.setCompany(company);;
-			System.out.println("Source " + company.getUrl());
-			System.out.println("    name   : " + extracted.getCompanyName());
-			System.out.println("    street : " + extracted.getStreet());
-			System.out.println("    zip    : " + extracted.getZip());
-			System.out.println("    city   : " + extracted.getCity());
-			entityManager.getTransaction().begin();
-			company.setLastParsedAddress(extracted);
-			entityManager.persist(extracted);
-			entityManager.persist(company);
-			entityManager.getTransaction().commit();
+		ApplicationDao dao = new ApplicationDao();
+		dao.setEntityManager(entityManager);
+		for (Company company : dao.getCompanies()) {
+			dao.processParsedAddress(company, extract(company.getUrl(), company.getAddressExtractionRule()));
 		}
 	}
 }
