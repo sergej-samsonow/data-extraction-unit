@@ -1,5 +1,9 @@
 package com.github.sergejsamsonow.dataextractionunit;
 
+import static java.lang.String.format;
+
+import java.util.Objects;
+
 public class Company {
 
 	private int id;
@@ -64,6 +68,20 @@ public class Company {
 
 	public void setAddressExtractionRule(String addressExtractionRule) {
 		this.addressExtractionRule = addressExtractionRule;
+	}
+	
+	@Override
+	public String toString() {
+		return Objects.toString(format(
+			"Company (\n"
+		  + "id: %s\n"
+		  + "name: %s\n"
+		  + "url: %s\n"
+		  + "addressExtractionRule: %s)\n"
+				, Objects.toString(getId())
+				, Objects.toString(getName())
+				, Objects.toString(getUrl())
+				, Objects.toString(getAddressExtractionRule())));
 	}
 
 }

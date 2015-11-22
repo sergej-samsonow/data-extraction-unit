@@ -1,5 +1,7 @@
 package com.github.sergejsamsonow.dataextractionunit;
 
+import static java.lang.String.format;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -37,7 +39,7 @@ public class Address {
 	}
 
 	public String getCompanyName() {
-		return companyName;
+		return companyName == null ? "" : companyName;
 	}
 
 	public void setCompanyName(String companyName) {
@@ -45,7 +47,7 @@ public class Address {
 	}
 
 	public String getStreet() {
-		return street;
+		return street == null ? "" : street;
 	}
 
 	public void setStreet(String street) {
@@ -53,7 +55,7 @@ public class Address {
 	}
 
 	public String getZip() {
-		return zip;
+		return zip == null ? "" : zip;
 	}
 
 	public void setZip(String zip) {
@@ -61,11 +63,15 @@ public class Address {
 	}
 
 	public String getCity() {
-		return city;
+		return city == null ? "" : city;
 	}
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public boolean isEmpty() {
+		return getCompanyName().isEmpty() && getStreet().isEmpty() && getZip().isEmpty() && getCity().isEmpty();
 	}
 
 	public boolean isTheSame(Address address) {
@@ -90,4 +96,19 @@ public class Address {
 		return Objects.hash(getId(), getCompanyName(), getStreet(), getZip(), getCity());
 	}
 
+	@Override
+	public String toString() {
+		return Objects.toString(format(
+		    "Address (\n" 
+		  + "id: %s\n" 
+		  + "companyName: %s\n"
+		  + "street: %s\n"
+		  + "zip: %s\n"
+		  + "city: %s)\n",
+		  Objects.toString(getId()), 
+		  Objects.toString(getCompanyName()), 
+		  Objects.toString(getStreet()),
+		  Objects.toString(getZip()),
+		  Objects.toString(getCity())));
+	}
 }

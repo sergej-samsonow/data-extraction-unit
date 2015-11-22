@@ -113,9 +113,14 @@ public class ApplicationDaoTest {
 		when(company.getLastParsedAddress()).thenReturn(address);
 		when(address.isTheSame(parsed)).thenReturn(false);
 		object.processParsedAddress(company, parsed);
-		InOrder order = inOrder(transaction, manager);
+		InOrder order = inOrder(transaction, manager, company, parsed);
 		order.verify(transaction).begin();
+		order.verify(parsed).setCompany(company);
 		order.verify(manager).persist(parsed);
+		order.verify(transaction).commit();
+
+		order.verify(transaction).begin();
+		order.verify(company).setLastParsedAddress(parsed);
 		order.verify(manager).persist(company);
 		order.verify(transaction).commit();
 	}

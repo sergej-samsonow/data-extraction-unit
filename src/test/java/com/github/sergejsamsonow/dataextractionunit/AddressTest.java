@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;;
+import static org.hamcrest.CoreMatchers.not;
 
 public class AddressTest {
 
@@ -166,6 +166,33 @@ public class AddressTest {
 		b.setZip("zip");
 		b.setCity("city");
 		assertThat(a.hashCode(), not(equalTo(b.hashCode())));
+	}
+
+	@Test
+	public void isEmptyNullString() throws Exception {
+		a.setCompanyName(null);
+		a.setStreet(null);
+		a.setZip(null);
+		a.setCity(null);
+		assertThat(a.isEmpty(), equalTo(true));
+	}
+
+	@Test
+	public void isEmptyEmptyString() throws Exception {
+		a.setCompanyName("");
+		a.setStreet("");
+		a.setZip("");
+		a.setCity("");
+		assertThat(a.isEmpty(), equalTo(true));
+	}
+
+	@Test
+	public void isNotEmpty() throws Exception {
+		a.setCompanyName("");
+		a.setStreet("some value");
+		a.setZip("");
+		a.setCity("");
+		assertThat(a.isEmpty(), equalTo(false));
 	}
 
 }
